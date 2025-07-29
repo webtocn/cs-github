@@ -10,6 +10,6 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo ${{ secrets.RSYNC_SSH_KEY }} > AAABBBCCC
-          chown 400 AAABBBCCC
+          chmod 400 AAABBBCCC
           docker run -it --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=./AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           echo "exit ..."
