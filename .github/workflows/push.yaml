@@ -10,6 +10,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run a multi-line script
         run: |
+          echo "ssh rsync"
+          ssh
+          rsync
           echo ${{ secrets.RSYNC_SSH_KEY }} > /tmp/AAABBBCCC
           chmod 400 /tmp/AAABBBCCC
           docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
