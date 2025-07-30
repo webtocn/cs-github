@@ -5,25 +5,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # 自动使用内置 Token
-
-      - name: Build and Push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/webtocn/cs-exector:latest
+      - uses: actions/checkout@v4
       - name: Run a multi-line script
-        uses: actions/checkout@v4
         run: |
+          docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
           docker pull registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           docker tag registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest ghcr.io/webtocn/cs-exector:latest
           docker push ghcr.io/webtocn/cs-exector:latest
