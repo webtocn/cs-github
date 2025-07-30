@@ -11,8 +11,8 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo "ssh rsync"
-          ssh -h
-          rsync -h
+          which rsync  || echo "rsync no"
+          which ssh || echo "ssh no"
           echo ${{ secrets.RSYNC_SSH_KEY }} > /tmp/AAABBBCCC
           chmod 400 /tmp/AAABBBCCC
           docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
