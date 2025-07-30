@@ -10,26 +10,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run a multi-line script
         run: |
-          echo "ssh rsync"
-          which rsync  || echo "rsync no"
-          which ssh || echo "ssh no"
-
           mkdir ~/.ssh
           echo "${{ secrets.RSYNC_SSH_KEY }}" > ~/.ssh/AAABBBCCC
           chmod 400 ~/.ssh/AAABBBCCC
-          file  ~/.ssh/AAABBBCCC
-
-          #wget https://filetoto.cncfstack.com/cs-executor
-          #scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${{ secrets.RSYNC_PORT }} -i ~/.ssh/AAABBBCCC root@${{ secrets.RSYNC_HOST }}:/data/nginx-data/filetoto/cs-executor ./
           chmod +x cs-executor
           md5sum cs-executor
-
-          #docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          #docker run --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=/tmp/AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} ghcr.io/webtocn/cs-exector:latest
-
           BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY=~/.ssh/AAABBBCCC  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
-
-          ls -lha ~/.ssh
           echo "exit ..."
           exit 0
 
