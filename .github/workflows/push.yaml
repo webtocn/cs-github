@@ -20,7 +20,7 @@ jobs:
           #docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
           #docker run --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=/tmp/AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} ghcr.io/webtocn/cs-exector:latest
 
-          BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY="/tmp/AAABBBCCD"  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
+          BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY="/tmp/AAABBBCCC"  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
 
           echo "exit ..."
           exit 0
