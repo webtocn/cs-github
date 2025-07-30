@@ -17,8 +17,9 @@ jobs:
           wget https://filetoto.cncfstack.com/cs-executor
           chmod +x cs-executor
           mkdir ~/.ssh
-          echo ${{ secrets.RSYNC_SSH_KEY }} > ~/.ssh/AAABBBCCC
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > ~/.ssh/AAABBBCCC
           chmod 400 ~/.ssh/AAABBBCCC
+          file  ~/.ssh/AAABBBCCC
           #docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
           #docker run --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=/tmp/AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} ghcr.io/webtocn/cs-exector:latest
 
@@ -27,3 +28,4 @@ jobs:
           ls -lha ~/.ssh
           echo "exit ..."
           exit 0
+
