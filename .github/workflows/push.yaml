@@ -19,7 +19,7 @@ jobs:
           chmod 400 ~/.ssh/AAABBBCCC
           file  ~/.ssh/AAABBBCCC
 
-          wget https://filetoto.cncfstack.com/cs-executor
+          #wget https://filetoto.cncfstack.com/cs-executor
           #scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${{ secrets.RSYNC_PORT }} -i ~/.ssh/AAABBBCCC root@${{ secrets.RSYNC_HOST }}:/data/nginx-data/filetoto/cs-executor ./
           chmod +x cs-executor
           md5sum cs-executor
