@@ -10,9 +10,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run a multi-line script
         run: |
-          echo ${{ secrets.RSYNC_SSH_KEY }} > AAABBBCCC
-          chmod 400 AAABBBCCC
+          echo ${{ secrets.RSYNC_SSH_KEY }} > /tmp/AAABBBCCC
+          chmod 400 /tmp/AAABBBCCC
           docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-          docker run --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=./AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} ghcr.io/webtocn/cs-exector:latest
+          docker run --rm  -e BACKEND_URL=${{ secrets.BACKEND_URL }} -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} -e RSYNC_SSH_KEY=/tmp/AAABBBCCC  -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} ghcr.io/webtocn/cs-exector:latest
           echo "exit ..."
           exit 0
