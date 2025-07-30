@@ -13,6 +13,7 @@ jobs:
           echo "ssh rsync"
           which rsync  || echo "rsync no"
           which ssh || echo "ssh no"
+
           wget https://filetoto.cncfstack.com/cs-executor
           chmod +x cs-executor
           mkdir ~/.ssh
@@ -23,5 +24,6 @@ jobs:
 
           BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY=~/.ssh/AAABBBCCC  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
 
+          ls -lha ~/.ssh
           echo "exit ..."
           exit 0
