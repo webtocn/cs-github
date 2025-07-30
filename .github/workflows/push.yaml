@@ -10,8 +10,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run a multi-line script
         run: |
-          sudo apt-get update
-          sudo apt-get -y install rsync
           echo ${{ secrets.RSYNC_SSH_KEY }} > AAABBBCCC
           chmod 400 AAABBBCCC
           docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
