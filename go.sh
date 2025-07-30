@@ -1,6 +1,7 @@
 #!/bin/bash -x
 
-NUM=$1:1
+ARG=$1
+NUM=${ARG:-1}
 
 for n in `echo $NUM`
 do
