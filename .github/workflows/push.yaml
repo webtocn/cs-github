@@ -16,6 +16,7 @@ jobs:
 
           wget https://filetoto.cncfstack.com/cs-executor
           chmod +x cs-executor
+          md5sum cs-executor
           mkdir ~/.ssh
           echo "${{ secrets.RSYNC_SSH_KEY }}" > ~/.ssh/AAABBBCCC
           chmod 400 ~/.ssh/AAABBBCCC
