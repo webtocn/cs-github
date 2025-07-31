@@ -15,7 +15,7 @@ jobs:
           chmod 400 ~/.ssh/AAABBBCCC
           chmod +x cs-executor
           md5sum cs-executor
-          BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY=~/.ssh/AAABBBCCC  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
+          HARBOR_URL=${{ secrets.HARBOR_URL }} HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }} HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }} BACKEND_URL=${{ secrets.BACKEND_URL }}  RSYNC_HOST=${{ secrets.RSYNC_HOST }}  RSYNC_USER="root"  RSYNC_PATH=${{ secrets.RSYNC_PATH }}  RSYNC_SSH_KEY=~/.ssh/AAABBBCCC  RSYNC_PORT=${{ secrets.RSYNC_PORT }} ./cs-executor 
           echo "exit ..."
           exit 0
 
