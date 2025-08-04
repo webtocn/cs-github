@@ -19,10 +19,10 @@ jobs:
                           -e BACKEND_URL=${{ secrets.BACKEND_URL }} \
                           -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} \
                           -e RSYNC_USER="${{ secrets.RSYNC_USER }}" \
-                          -e RSYNC_PATH=${{ secrets.RSYNC_PATH }} \
                           -e RSYNC_SSH_KEY="/id_rsa" \
                           -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} \
-                          -v "./id_rsa=/id_rsa":Z \
+                          -e DOCKER_SSH_KEY=/id_rsa \
+                          -v "./id_rsa=/id_rsa" \
                           registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           echo "exit ..."
           exit 0
