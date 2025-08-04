@@ -21,8 +21,8 @@ jobs:
                           -e RSYNC_USER="${{ secrets.RSYNC_USER }}" \
                           -e RSYNC_SSH_KEY="/id_rsa" \
                           -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} \
-                          -e DOCKER_SSH_KEY=/id_rsa \
-                          -v "./id_rsa=/id_rsa" \
+                          -e DOCKER_SSH_KEY=id_rsa \
+                          -v ./id_rsa=id_rsa \
                           registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           echo "exit ..."
           exit 0
