@@ -10,6 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run a multi-line script
         run: |
+          echo ${{ secrets.RSYNC_SSH_KEY }} > ./github_id_rsa
           docker run --rm -e HARBOR_URL=${{ secrets.HARBOR_URL }} \
                           -e HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }} \
                           -e HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }} \
@@ -17,7 +18,7 @@ jobs:
                           -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} \
                           -e RSYNC_USER="${{ secrets.RSYNC_USER }}" \
                           -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} \
-                          -e GITHUB_RSYNC_SSH_KEY=${{ secrets.RSYNC_SSH_KEY }} \
+                          -v `pwd`:/data \
                           registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           echo "exit ..."
           exit 0
