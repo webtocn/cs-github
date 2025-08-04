@@ -19,7 +19,6 @@ jobs:
                           -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} \
                           -e RSYNC_USER=${{ secrets.RSYNC_USER }} \
                           -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} \
-                          -v "${PWD}/data":"/data" \
                           registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
           echo "exit ..."
           exit 0
