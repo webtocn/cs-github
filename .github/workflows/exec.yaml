@@ -11,14 +11,18 @@ jobs:
       - name: Run a multi-line script
         run: |
           mkdir data
-          echo ${{ secrets.RSYNC_SSH_KEY }} > data/github_id_rsa
-          docker run --rm -e HARBOR_URL=${{ secrets.HARBOR_URL }} \
-                          -e HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }} \
-                          -e HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }} \
-                          -e BACKEND_URL=${{ secrets.BACKEND_URL }} \
-                          -e RSYNC_HOST=${{ secrets.RSYNC_HOST }} \
-                          -e RSYNC_USER=${{ secrets.RSYNC_USER }} \
-                          -e RSYNC_PORT=${{ secrets.RSYNC_PORT }} \
-                          registry.cn-hangzhou.aliyuncs.com/wylibrary/cs-exector:latest
+
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > data/github_id_rsa
+
+          echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> data/envfile
+          echo  "export HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }}" >> data/envfile
+          echo  "export HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }}" >> data/envfile
+          echo  "export BACKEND_URL=${{ secrets.BACKEND_URL }}" >> data/envfile
+          echo  "export RSYNC_HOST=${{ secrets.RSYNC_HOST }}" >> data/envfile
+          echo  "export RSYNC_USER=${{ secrets.RSYNC_USER }}" >> data/envfile
+          echo  "export RSYNC_PORT=${{ secrets.RSYNC_PORT }}" >> data/envfile
+
+          /bin/bash run.sh
+
           echo "exit ..."
           exit 0
