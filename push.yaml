@@ -18,7 +18,7 @@ jobs:
           export HARBOR_URL=${{ secrets.HARBOR_URL }}
           export HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }}
           export HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }}
-          export BACKEND_URL=${{ secrets.BACKEND_URL }}
+          export CS_SERVER_URL=${{ secrets.CS_SERVER_URL }}
           export RSYNC_HOST=${{ secrets.RSYNC_HOST }}
           export RSYNC_USER="${{ secrets.RSYNC_USER }}"
           export RSYNC_PATH=${{ secrets.RSYNC_PATH }}
