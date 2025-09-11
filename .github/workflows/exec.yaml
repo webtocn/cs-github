@@ -25,7 +25,16 @@ jobs:
           echo  "export KEYCLOAK_REALM=${{ secrets.KEYCLOAK_REALM }}" >> data/envfile
           echo  "export KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> data/envfile
           echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> data/envfile
-          echo  "export" >> data/envfile
+      
+
+          if echo "${{ github.event.head_commit.message }}" | grep -q "SYNC_CHARTMUSEUM"; then
+             echo  "export SYNC_CHARTMUSEUM=true" >> data/envfile
+          elif echo "${{ github.event.head_commit.message }}" | grep -q "SYNC_ARTIFACTHUB"; then
+             echo  "export SYNC_ARTIFACTHUB=true" >> data/envfile
+          else
+             echo  "no sync"
+          fi
+
 
           /bin/bash run.sh
 
