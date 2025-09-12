@@ -1,20 +1,4 @@
-#!/bin/bash -x
-
-NUM=$1
-NUM=${NUM:=1}  # 若参数为空则默认为1
-
-# 使用C语言风格循环
-for ((n=0; n<$NUM; n++))
-do
-    DATE=$(date)
-    echo "Date=>$DATE" > .date
-    git add . --all && git commit -m "Date=>$DATE" && git push
-    sleep 5
-done
-
-SYNC_CHARTMUSEUM
-SYNC_ARTIFACTHUB
-
+#!/bin/bash
 
 ARGS=$1
 
@@ -23,9 +7,19 @@ generate_diff(){
     echo "Date=>$DATE" > .date
 }
 
-# 对参数进行判断
-# 如果没有参数就输出 help
-# 如果有参数就进行参数执行
+run_task(){
+    NUM=$1
+    DATE=$(date)
+
+    for ((n=0; n<$NUM; n++))
+    do
+        echo "Date=>$DATE , Task=> $NUM" > .date
+        git add . --all && git commit -m "Date=>$DATE , Task=> $NUM" && git push
+        sleep 5
+    done
+}
+
+
 case $ARGS in
     sc)
         generate_diff
@@ -37,12 +31,22 @@ case $ARGS in
         ;;
     task)
         generate_diff
-        git add . --all && git commit -m "Date=>$DATE" && git push
+        run_task 1
+        ;;
+    task5)
+        generate_diff
+        run_task 5
+        ;;
+    task10)
+        generate_diff
+        run_task 10
         ;;
     *)
-        echo "Usage: $0 {sync}"
-        echo "sc: 将仓库中的所有版本chart同步到chartmuseum"
-        echo "sa: 从artifacthub获取仓库信息"
-        echo "task: 运行任务"
+        echo "Usage: $0 {option}"
+        echo "  sc: 将仓库中的所有版本chart同步到存储"
+        echo "  sa: 从artifacthub获取仓库信息"
+        echo "  task: 运行单次任务"
+        echo "  task5: 运行5次任务"
+        echo "  task10: 运行10次任务"
         ;;
 esac
