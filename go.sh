@@ -43,8 +43,8 @@ case $ARGS in
         ;;
     *)
         echo "Usage: $0 {option}"
-        echo "  sc: 将仓库中的所有版本chart同步到存储"
-        echo "  sa: 从artifacthub获取仓库信息"
+        echo "  sc: To ChartMuseum 将仓库中的所有版本chart同步到存储"
+        echo "  sa: From Artifacthub 获取仓库信息"
         echo "  task: 运行单次任务"
         echo "  task5: 运行5次任务"
         echo "  task10: 运行10次任务"
