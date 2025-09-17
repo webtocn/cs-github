@@ -26,7 +26,7 @@ jobs:
           echo  "export KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> data/envfile
           echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> data/envfile
 
-          echo  "export SYNC_CHARTMUSEUM=true" >> data/envfile
+          echo  "export TASK_INFO="helmchart_to_chartmuseum" " >> data/envfile
 
           /bin/bash run.sh
 

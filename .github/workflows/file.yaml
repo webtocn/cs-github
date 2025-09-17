@@ -1,7 +1,7 @@
-name: push-toto
+name: Cron Run SYNC_CHARTMUSEUM
 on:
-  push:
-    branches: [ "main" ]
+  schedule:
+    - cron: "15 */6 * * *"
   workflow_dispatch:
 jobs:
   build:
@@ -25,16 +25,8 @@ jobs:
           echo  "export KEYCLOAK_REALM=${{ secrets.KEYCLOAK_REALM }}" >> data/envfile
           echo  "export KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> data/envfile
           echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> data/envfile
-      
 
-          if echo "${{ github.event.head_commit.message }}" | grep -q "SYNC_CHARTMUSEUM"; then
-             echo  "export SYNC_CHARTMUSEUM=true" >> data/envfile
-          elif echo "${{ github.event.head_commit.message }}" | grep -q "SYNC_ARTIFACTHUB"; then
-             echo  "export SYNC_ARTIFACTHUB=true" >> data/envfile
-          else
-             echo  "no sync"
-          fi
-
+          echo  "export TASK_INFO="file" " >> data/envfile
 
           /bin/bash run.sh
 

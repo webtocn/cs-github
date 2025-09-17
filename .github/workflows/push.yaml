@@ -1,0 +1,36 @@
+name: push-toto
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run a multi-line script
+        run: |
+          mkdir data
+
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > data/github_id_rsa
+
+          echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> data/envfile
+          echo  "export HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }}" >> data/envfile
+          echo  "export HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }}" >> data/envfile
+          echo  "export CS_SERVER_URL=${{ secrets.CS_SERVER_URL }}" >> data/envfile
+          echo  "export RSYNC_HOST=${{ secrets.RSYNC_HOST }}" >> data/envfile
+          echo  "export RSYNC_USER=${{ secrets.RSYNC_USER }}" >> data/envfile
+          echo  "export RSYNC_PORT=${{ secrets.RSYNC_PORT }}" >> data/envfile
+          echo  "export KEYCLOAK_URL=${{ secrets.KEYCLOAK_URL }}" >> data/envfile
+          echo  "export KEYCLOAK_REALM=${{ secrets.KEYCLOAK_REALM }}" >> data/envfile
+          echo  "export KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> data/envfile
+          echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> data/envfile
+      
+          if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
+              echo "${{ github.event.head_commit.message }}"  >> data/envfile
+          fi
+
+          /bin/bash run.sh
+
+          echo "exit ..."
+          exit 0
