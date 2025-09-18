@@ -27,7 +27,7 @@ jobs:
           echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> data/envfile
       
           if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
-              echo "${{ github.event.head_commit.message }}"  >> data/envfile
+              echo "export ${{ github.event.head_commit.message }}"  >> data/envfile
           fi
 
           /bin/bash run.sh
