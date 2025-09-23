@@ -11,7 +11,7 @@ jobs:
       - name: Run a multi-line script
         run: |
 
-          JOB_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs/${{ github.job }}"
+          JOB_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs/${{ github.job_workflow_sha }}"
           echo "Job URL: $JOB_URL"
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa
