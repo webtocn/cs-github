@@ -32,7 +32,7 @@ jobs:
 
           
           source envfile
-          apt-get update && apt-get install -y ca-certificates openssh-client rsync  skopeo curl
+          sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
           curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
           wget https://file.cncfstack.com/cncfstack/cs-executor
           chmod +x cs-executor
