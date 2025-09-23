@@ -79,4 +79,4 @@ jobs:
           ./cs-executor-linux-amd64
 
           echo ${GITHUB_ACTION_JOB_URL} > website_output/github_action_job_url.txt
-          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" website_output ${RSYNC_USER}@${RSYNC_HOST}:/data/nginx-data/website/kubernetes
+          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" website-site ${RSYNC_USER}@${RSYNC_HOST}:/data/nginx-data/website/kubernetes
