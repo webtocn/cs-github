@@ -40,16 +40,20 @@ jobs:
           fi
           source envfile
 
+          echo
           echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
 
+          echo
           echo "安装 helm"
           curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
 
+          echo
           echo "下载 cs-executor"
           # wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_PATH}/cncfstack/cs-executor .
 
+          echo
           echo "检查文件"
           ls -lha
           file cs-executor
