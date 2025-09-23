@@ -12,6 +12,12 @@ jobs:
         run: |
 
 
+
+
+
+
+
+
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa
 
           echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> envfile
@@ -34,8 +40,7 @@ jobs:
           source envfile
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
           curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
-          wget https://file.cncfstack.com/cncfstack/cs-executor
-          chmod +x cs-executor
+          wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
 
           # 执行
           ./cs-executor
