@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "The complete job URL is: ${{ steps.get_job_url.outputs.url }}"
 
-          echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
 
           echo  "export GITHUB_ACTION_JOB_URL=${{ steps.get_job_url.outputs.url }}" >> envfile
           echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> envfile
@@ -47,6 +47,7 @@ jobs:
           echo
           echo "安装 helm"
           curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          helm version
 
           echo
           echo "下载 cs-executor"
