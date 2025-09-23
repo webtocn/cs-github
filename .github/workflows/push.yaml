@@ -46,7 +46,7 @@ jobs:
 
           echo
           echo "安装 helm"
-          curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
+          curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
 
           echo
           echo "下载 cs-executor"
