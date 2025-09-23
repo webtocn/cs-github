@@ -34,7 +34,17 @@ jobs:
 
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
           curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
-          wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
+          # wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
+          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_PATH}/cncfstack/cs-executor .
 
           # 执行
           ./cs-executor
+
+
+
+	# rsyncCmd := fmt.Sprintf("%s:%s", h.RsyncHost, h.RsyncPath)
+	# sshOption := fmt.Sprintf("ssh -p %s -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null", h.SshPort, h.SshKeyPath)
+
+	# // 使用 rsync 命令同步目录
+	# cmd := exec.Command("/usr/bin/rsync", "-av", "--ignore-existing", "-e", sshOption, h.DownloadDir+"/", fmt.Sprintf("%s@%s", h.RsyncUser, rsyncCmd))
+ 
