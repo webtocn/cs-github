@@ -23,6 +23,7 @@ jobs:
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa
 
+          echo  "export GITHUB_ACTION_JOB_URL=${{ steps.get_job_url.outputs.url }}" >> envfile
           echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> envfile
           echo  "export HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }}" >> envfile
           echo  "export HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }}" >> envfile
@@ -39,13 +40,19 @@ jobs:
           fi
           source envfile
 
+          echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
+
+          echo "安装 helm"
           curl https://github.com/helm/helm/raw/branch/main/scripts/get-helm-3 | bash
+
+          echo "下载 cs-executor"
           # wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_PATH}/cncfstack/cs-executor .
 
+          echo "检查文件"
           ls -lha
           file cs-executor
-          
-          # 执行
+
+          echo "执行"
           ./cs-executor
