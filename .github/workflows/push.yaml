@@ -42,9 +42,9 @@ jobs:
 
 
 
-	# rsyncCmd := fmt.Sprintf("%s:%s", h.RsyncHost, h.RsyncPath)
-	# sshOption := fmt.Sprintf("ssh -p %s -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null", h.SshPort, h.SshKeyPath)
+          # rsyncCmd := fmt.Sprintf("%s:%s", h.RsyncHost, h.RsyncPath)
+          # sshOption := fmt.Sprintf("ssh -p %s -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null", h.SshPort, h.SshKeyPath)
 
-	# // 使用 rsync 命令同步目录
-	# cmd := exec.Command("/usr/bin/rsync", "-av", "--ignore-existing", "-e", sshOption, h.DownloadDir+"/", fmt.Sprintf("%s@%s", h.RsyncUser, rsyncCmd))
- 
+          # // 使用 rsync 命令同步目录
+          # cmd := exec.Command("/usr/bin/rsync", "-av", "--ignore-existing", "-e", sshOption, h.DownloadDir+"/", fmt.Sprintf("%s@%s", h.RsyncUser, rsyncCmd))
+        
