@@ -39,6 +39,7 @@ jobs:
               echo "export ${{ github.event.head_commit.message }}"  >> envfile
           fi
           source envfile
+          . envfile
 
           echo
           echo "安装软件包"
@@ -50,9 +51,9 @@ jobs:
           helm version
 
           echo
-          echo "下载 cs-executor"
+          echo "下载文件"
           # wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
-          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_PATH}/cncfstack/cs-executor .
+          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor .
 
           echo
           echo "检查文件"
