@@ -17,15 +17,9 @@ jobs:
           JOB_URL=$(gh run view $GITHUB_RUN_ID --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url')
           # 将获取到的URL设置为步骤的输出
           echo "url=$JOB_URL" >> $GITHUB_OUTPUT
-      - name: Use the Job URL
-        run: |
-          echo "The complete job URL is: ${{ steps.get_job_url.outputs.url }}"
-          # 你可以用它做更多事情，比如发送通知
       - name: Run a multi-line script
         run: |
-
-          JOB_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs/${{ github.job_workflow_sha }}"
-          echo "Job URL: $JOB_URL"
+          echo "The complete job URL is: ${{ steps.get_job_url.outputs.url }}"
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa
 
@@ -50,14 +44,8 @@ jobs:
           # wget https://file.cncfstack.com/cncfstack/cs-executor -O cs-executor && chmod +x cs-executor
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:${RSYNC_PATH}/cncfstack/cs-executor .
 
+          ls -lha
+          file cs-executor
+          
           # 执行
           ./cs-executor
-
-
-
-          # rsyncCmd := fmt.Sprintf("%s:%s", h.RsyncHost, h.RsyncPath)
-          # sshOption := fmt.Sprintf("ssh -p %s -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null", h.SshPort, h.SshKeyPath)
-
-          # // 使用 rsync 命令同步目录
-          # cmd := exec.Command("/usr/bin/rsync", "-av", "--ignore-existing", "-e", sshOption, h.DownloadDir+"/", fmt.Sprintf("%s@%s", h.RsyncUser, rsyncCmd))
-        
