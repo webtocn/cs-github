@@ -87,6 +87,7 @@ jobs:
           ./cs-executor-linux-amd64
 
           echo "上传文件"
+          log_info "上传文件"
           d=`date`
           echo "$d - $GITHUB_ACTION_JOB_URL" > web_code_dir/website-html/github_job_url.txt
-          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" web_code_dir/website-html/* ${RSYNC_USER}@${RSYNC_HOST}:/data/nginx-data/website/kubernetes
+          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" web_code_dir/website-html/* ${RSYNC_USER}@${RSYNC_HOST}:/data/nginx-data/website/argocd
