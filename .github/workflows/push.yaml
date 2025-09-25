@@ -34,19 +34,7 @@ jobs:
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
         run: |
-          # echo "The complete job URL is: ${{ steps.get_job_url.outputs.url }}"
-          # echo  "export GITHUB_ACTION_JOB_URL=${{ steps.get_job_url.outputs.url }}" >> envfile
-          # echo  "export HARBOR_URL=${{ secrets.HARBOR_URL }}" >> envfile
-          # echo  "export HARBOR_USERNAME=${{ secrets.HARBOR_USERNAME }}" >> envfile
-          # echo  "export HARBOR_PASSWORD=${{ secrets.HARBOR_PASSWORD }}" >> envfile
-          # echo  "export CS_SERVER_URL=${{ secrets.CS_SERVER_URL }}" >> envfile
-          # echo  "export RSYNC_HOST=${{ secrets.RSYNC_HOST }}" >> envfile
-          # echo  "export RSYNC_USER=${{ secrets.RSYNC_USER }}" >> envfile
-          # echo  "export RSYNC_PORT=${{ secrets.RSYNC_PORT }}" >> envfile
-          # echo  "export KEYCLOAK_URL=${{ secrets.KEYCLOAK_URL }}" >> envfile
-          # echo  "export KEYCLOAK_REALM=${{ secrets.KEYCLOAK_REALM }}" >> envfile
-          # echo  "export KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> envfile
-          # echo  "export KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> envfile
+          echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
 
