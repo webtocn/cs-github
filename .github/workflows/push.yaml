@@ -46,7 +46,10 @@ jobs:
 
           echo ""
           echo "安装 helm"
-          curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          which helm
+          if [ $? -ne 0 ];then
+            curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          fi
           helm version
 
           echo "下载文件"
