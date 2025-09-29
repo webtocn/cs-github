@@ -1,4 +1,4 @@
-name: Website Cron
+name: Image Cron
 on:
   schedule:
     - cron: "30 */6 * * *"
