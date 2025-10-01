@@ -1,4 +1,4 @@
-name: Image Cron
+name: Image Cron 定时同步
 on:
   schedule:
     - cron: "30 */6 * * *"

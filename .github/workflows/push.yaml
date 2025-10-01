@@ -1,4 +1,4 @@
-name: push-toto
+name: 人工Push
 on:
   push:
     branches: [ "main" ]
