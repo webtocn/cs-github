@@ -36,10 +36,6 @@ jobs:
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
 
-          # if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
-          #     echo "export ${{ github.event.head_commit.message }}"  >> envfile
-          # fi
-
           echo ""
           echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
