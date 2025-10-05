@@ -1,4 +1,4 @@
-name: Website Cron 定时同步
+name: ChartSync Cron 定时同步
 on:
   schedule:
     - cron: "30 */6 * * *"
@@ -36,10 +36,6 @@ jobs:
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
 
-          # if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
-          #     echo "export ${{ github.event.head_commit.message }}"  >> envfile
-          # fi
-
           echo ""
           echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
@@ -71,13 +67,9 @@ jobs:
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
-
-          TASK_INFO: "website"
+          TASK_INFO: "helmchart_to_chartmuseum"
         run: |
           echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
-
-          source envfile
-          . envfile
 
           echo ""
           echo "检查文件"

@@ -1,4 +1,4 @@
-name: ChartSync Cron 定时同步
+name: Website Cron 定时同步
 on:
   schedule:
     - cron: "30 */6 * * *"
@@ -71,12 +71,10 @@ jobs:
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
-          TASK_INFO: "helmchart_to_chartmuseum"
+
+          TASK_INFO: "website"
         run: |
           echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
-
-          source envfile
-          . envfile
 
           echo ""
           echo "检查文件"
