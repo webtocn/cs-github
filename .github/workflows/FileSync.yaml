@@ -32,6 +32,10 @@ jobs:
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
@@ -67,7 +71,10 @@ jobs:
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
-
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
           TASK_INFO: "file"
         run: |
           echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
