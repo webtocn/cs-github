@@ -55,7 +55,17 @@ jobs:
           echo "下载文件"
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
-          
+
+          echo "安装阿里云OSS 工具"
+          if [ ! -f ./ossutil ];then
+            log_info "当前路径下无 ossutil，下载并安装到本地 ./ossutil 和 /usr/bin/ossutil"
+            wget -q -O /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip  https://gosspublic.alicdn.com/ossutil/v2-beta/2.0.6-beta.01091200/ossutil-2.0.6-beta.01091200-linux-amd64.zip
+            unzip /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip -d  /tmp
+            cp /tmp/ossutil-2.0.6-beta.01091200-linux-amd64/ossutil ./ossutil
+            chmod +x ./ossutil
+            sudo cp ./ossutil /usr/bin/
+          fi
+
       - name: Run a multi-line script
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
@@ -71,6 +81,10 @@ jobs:
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
           KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
           echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
 
