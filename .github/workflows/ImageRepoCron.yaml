@@ -44,13 +44,13 @@ jobs:
           echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
 
-          echo ""
-          echo "安装 helm"
-          which helm
-          if [ $? -ne 0 ];then
-            curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
-          fi
-          helm version
+          # echo ""
+          # echo "安装 helm"
+          # which helm
+          # if [ $? -ne 0 ];then
+          #   curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          # fi
+          # helm version
 
           echo "下载文件"
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
