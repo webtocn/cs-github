@@ -1,4 +1,4 @@
-name: 人工Push
+name: 人工PUSH
 on:
   push:
     branches: [ "main" ]
@@ -17,7 +17,7 @@ jobs:
           JOB_URL=$(gh run view $GITHUB_RUN_ID --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url')
           # 将获取到的URL设置为步骤的输出
           echo "url=$JOB_URL" >> $GITHUB_OUTPUT
-      - name: 安装工具
+      - name: 安装依赖工具
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
           RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
@@ -56,7 +56,7 @@ jobs:
           fi
           helm version
 
-          echo "下载文件"
+          echo "下载cs-executor文件"
           /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
 
@@ -70,24 +70,27 @@ jobs:
           fi
 
       - name: Run a multi-line script
+        env:
+          GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
+          RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
+          HARBOR_URL: ${{ secrets.HARBOR_URL }}
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          CS_SERVER_URL: ${{ secrets.CS_SERVER_URL }}
+          RSYNC_HOST: ${{ secrets.RSYNC_HOST }}
+          RSYNC_USER: ${{ secrets.RSYNC_USER }}
+          RSYNC_PORT: ${{ secrets.RSYNC_PORT }}
+          KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+          KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+          KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
+          KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
-          echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
-
+          echo "加载TASK_INFO变量"
           source envfile
-          . envfile
 
-          echo ""
-          echo "检查文件"
-          ls -lha
-          file cs-executor-linux-amd64
-
-          echo ""
-          echo "执行"
+          echo "执行程序"
           ./cs-executor-linux-amd64
-
-          # echo ""
-          # echo ""
-          # echo "上传文件"
-          # d=`date`
-          # echo "$d - $GITHUB_ACTION_JOB_URL" > web_code_dir/website-html/github_job_url.txt
-          # /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" web_code_dir/website-html/* ${RSYNC_USER}@${RSYNC_HOST}:/data/nginx-data/website/kubernetes
