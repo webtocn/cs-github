@@ -17,6 +17,9 @@ jobs:
           JOB_URL=$(gh run view $GITHUB_RUN_ID --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url')
           # 将获取到的URL设置为步骤的输出
           echo "url=$JOB_URL" >> $GITHUB_OUTPUT
+      - name: 安装 ffmpeg（file image同步依赖）
+        run: |
+          sudo apt-get update && sudo apt install ffmpeg -y
       - name: 安装依赖工具
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
