@@ -60,7 +60,7 @@ jobs:
           helm version
 
           echo "下载cs-executor文件"
-          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
+          /usr/bin/rsync  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST_MTO}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
 
           echo "安装阿里云OSS 工具"
