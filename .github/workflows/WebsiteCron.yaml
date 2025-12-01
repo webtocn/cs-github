@@ -52,8 +52,9 @@ jobs:
           # fi
           # helm version
 
-          echo "下载文件"
-          /usr/bin/rsync  -av --ignore-existing -e "ssh -p $RSYNC_PORT -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@${RSYNC_HOST}:/data/downloads/cncfstack/cs-executor-linux-amd64 .
+          echo "下载cs-executor文件"
+          RSYNC_CMD=`which rsync`
+          $RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@60.204.247.75:/data/downloads/cncfstack/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
 
           echo "安装阿里云OSS 工具"
