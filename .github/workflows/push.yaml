@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Get Job URL using GitHub CLI
+      - name: 获取 Job URL
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: get_job_url # 为这个步骤设置一个ID，以便后续步骤引用其输出
@@ -59,11 +59,13 @@ jobs:
           fi
           helm version
 
+          echo ""
           echo "下载cs-executor文件"
           RSYNC_CMD=`which rsync`
           $RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/nas-ssd/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
 
+          echo ""
           echo "安装阿里云OSS 工具"
           if [ ! -f /usr/bin/ossutil ];then
             wget -q -O /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip  https://gosspublic.alicdn.com/ossutil/v2-beta/2.0.6-beta.01091200/ossutil-2.0.6-beta.01091200-linux-amd64.zip
