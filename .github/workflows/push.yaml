@@ -31,6 +31,7 @@ jobs:
           RSYNC_HOST: ${{ secrets.RSYNC_HOST }}
           RSYNC_USER: ${{ secrets.RSYNC_USER }}
           RSYNC_PORT: ${{ secrets.RSYNC_PORT }}
+          RSYNC_PATH: ${{ secrets.RSYNC_PATH }}
           KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
           KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
           KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
