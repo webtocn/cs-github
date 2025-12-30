@@ -62,8 +62,9 @@ jobs:
 
           echo ""
           echo "下载cs-executor文件"
-          RSYNC_CMD=`which rsync`
-          $RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/nas-ssd/cs-executor-linux-amd64 .
+          #RSYNC_CMD=`which rsync`
+          #$RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/nas-ssd/cs-executor-linux-amd64 .
+          wget -q -O cs-executor-linux-amd64 https://raw.githubusercontent.com/cncfstack/file/refs/heads/main/cs-executor-linux-amd64
           chmod +x cs-executor-linux-amd64
 
           echo ""
