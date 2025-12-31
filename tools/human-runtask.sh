@@ -1,0 +1,108 @@
+name: 人工PUSH
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v4
+      - name: 获取 Job URL
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: get_job_url # 为这个步骤设置一个ID，以便后续步骤引用其输出
+        run: |
+          # 使用 gh run view 命令获取指定名称作业的URL
+          JOB_URL=$(gh run view $GITHUB_RUN_ID --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url')
+          # 将获取到的URL设置为步骤的输出
+          echo "url=$JOB_URL" >> $GITHUB_OUTPUT
+      - name: 安装 ffmpeg（file image同步依赖）
+        run: |
+          sudo apt-get update && sudo apt install ffmpeg -y
+      - name: 安装依赖工具
+        env:
+          GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
+          RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
+          HARBOR_URL: ${{ secrets.HARBOR_URL }}
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          CS_SERVER_URL: ${{ secrets.CS_SERVER_URL }}
+          RSYNC_HOST: ${{ secrets.RSYNC_HOST }}
+          RSYNC_USER: ${{ secrets.RSYNC_USER }}
+          RSYNC_PORT: ${{ secrets.RSYNC_PORT }}
+          RSYNC_PATH: ${{ secrets.RSYNC_PATH }}
+          KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+          KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+          KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
+          KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
+
+          if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
+              echo "export ${{ github.event.head_commit.message }}"  >> envfile
+          fi
+
+          echo ""
+          echo "安装软件包"
+          sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
+
+          echo ""
+          echo "安装 helm"
+          which helm
+          if [ $? -ne 0 ];then
+            curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          fi
+          helm version
+
+          echo ""
+          echo "下载cs-executor文件, 基于wget"
+          #RSYNC_CMD=`which rsync`
+          #$RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/nas-ssd/cs-executor-linux-amd64 .
+          wget -q -O cs-executor-linux-amd64 https://raw.githubusercontent.com/cncfstack/file/refs/heads/main/cs-executor-linux-amd64
+          chmod +x cs-executor-linux-amd64
+
+          echo ""
+          echo "安装阿里云OSS 工具"
+          if [ ! -f /usr/bin/ossutil ];then
+            wget -q -O /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip  https://gosspublic.alicdn.com/ossutil/v2-beta/2.0.6-beta.01091200/ossutil-2.0.6-beta.01091200-linux-amd64.zip
+            unzip /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip -d  /tmp
+            cp /tmp/ossutil-2.0.6-beta.01091200-linux-amd64/ossutil ./ossutil
+            chmod +x ./ossutil
+            sudo cp ./ossutil /usr/bin/
+          fi
+
+      - name: Run a multi-line script
+        env:
+          GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
+          RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
+          HARBOR_URL: ${{ secrets.HARBOR_URL }}
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          CS_SERVER_URL: ${{ secrets.CS_SERVER_URL }}
+          RSYNC_HOST: ${{ secrets.RSYNC_HOST }}
+          RSYNC_USER: ${{ secrets.RSYNC_USER }}
+          RSYNC_PORT: ${{ secrets.RSYNC_PORT }}
+          KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+          KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+          KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
+          KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+          OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+          OSS_REGION: ${{ secrets.OSS_REGION }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          echo "加载TASK_INFO变量"
+          source envfile
+
+          echo "执行程序"
+          ./cs-executor-linux-amd64
