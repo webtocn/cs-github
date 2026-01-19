@@ -116,7 +116,7 @@ jobs:
           # $RUNNER_TEMP 代表临时目录
           gh run download ${{ github.run_id }} --dir $RUNNER_TEMP/log-zip
           unzip $RUNNER_TEMP/log-zip/*.zip -d $RUNNER_TEMP/log-extracted
-
+          ls -lha $RUNNER_TEMP/log-extracted
           ossutil cp $RUNNER_TEMP/log-extracted/run_executor  oss:///gh-logs/${{ github.run_id }} --recursive
 
 
