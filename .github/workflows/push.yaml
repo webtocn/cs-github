@@ -105,18 +105,7 @@ jobs:
 
           echo "执行程序"
           ./cs-executor-linux-amd64
-
-      - name: Download Full Logs
-        run: |
-      
-          # 使用 GitHub CLI 登录 (需要 GITHUB_TOKEN)
-          gh auth login --github-token ${{ secrets.GITHUB_TOKEN }}
-          
-          # 下载当前 Workflow Run 的日志
-          # $RUNNER_TEMP 代表临时目录
-          gh run download ${{ github.run_id }} --dir $RUNNER_TEMP/log-zip
-          unzip $RUNNER_TEMP/log-zip/*.zip -d $RUNNER_TEMP/log-extracted
-          ls -lha $RUNNER_TEMP/log-extracted
-          ossutil cp $RUNNER_TEMP/log-extracted/run_executor  oss:///gh-logs/${{ github.run_id }} --recursive
-
+         
+          echo "执行完成，以下是日志"
+          cat executor.log
 
