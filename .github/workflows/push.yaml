@@ -1,4 +1,4 @@
-name: 人工PUSH
+name: Single_PUSH
 on:
   push:
     branches: [ "main" ]
@@ -51,7 +51,8 @@ jobs:
 
           echo ""
           echo "安装软件包"
-          sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
+          sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl gh
+
 
           echo ""
           echo "安装 helm"
@@ -78,7 +79,7 @@ jobs:
             sudo cp ./ossutil /usr/bin/
           fi
 
-      - name: Run a multi-line script
+      - name: run_executor
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
           RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
@@ -104,3 +105,18 @@ jobs:
 
           echo "执行程序"
           ./cs-executor-linux-amd64
+
+      - name: Download Full Logs
+        run: |
+      
+          # 使用 GitHub CLI 登录 (需要 GITHUB_TOKEN)
+          gh auth login --github-token ${{ secrets.GITHUB_TOKEN }}
+          
+          # 下载当前 Workflow Run 的日志
+          # $RUNNER_TEMP 代表临时目录
+          gh run download ${{ github.run_id }} --dir $RUNNER_TEMP/log-zip
+          unzip $RUNNER_TEMP/log-zip/*.zip -d $RUNNER_TEMP/log-extracted
+
+          ossutil cp $RUNNER_TEMP/log-extracted/run_executor  oss:///gh-logs/${{ github.run_id }} --recursive
+
+
