@@ -108,4 +108,4 @@ jobs:
          
           echo "执行完成，以下是日志"
           cat executor.log
-          /usr/bin/ossutil cp --endpoint=${{OSS_ENDPOINT}} --region=${{OSS_REGION}} --access-key-id=${{OSS_ACCESS_KEY_ID}}  --access-key-secret=$${{OSS_ACCESS_KEY_SECRET}}  executor.log oss://cncfstack-log/${{ github.run_id }}.txt
+          /usr/bin/ossutil cp --endpoint=${{ secrets.OSS_ENDPOINT }} --region=${{ secrets.OSS_REGION }} --access-key-id=${{ secrets.OSS_ACCESS_KEY_ID }}  --access-key-secret=$${{ secrets.OSS_ACCESS_KEY_SECRET }}  executor.log oss://cncfstack-log/${{ github.run_id }}.txt
