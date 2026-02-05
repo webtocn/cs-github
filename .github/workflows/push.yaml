@@ -3,19 +3,17 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-concurrency:
-  # 逻辑：取 run_number 最后一位，将其映射到 group1, group2 或 group3
-  # 这里的 endsWith 会检查 run_number 的末尾数字
-  group: >-
-    ${{ 
-      (endsWith(github.run_number, '1') || endsWith(github.run_number, '2') || endsWith(github.run_number, '3') || endsWith(github.run_number, '0')) && 'group-1' || 
-      (endsWith(github.run_number, '4') || endsWith(github.run_number, '5') || endsWith(github.run_number, '6')) && 'group-2' || 
-      'group-3' 
-    }}
-  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
+    steps:
+      - name: Wait for workflow concurrency
+        uses: softprop/turnstyle@v2
+        with:
+          # 使用分流 ID，逻辑同上，但 turnstyle 会让任务在 step 级别阻塞而非在 workflow 级别取消
+          group: ${{ github.workflow }}-${{ github.run_number % 3 }} 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: 获取 Job URL
