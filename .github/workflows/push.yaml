@@ -3,11 +3,15 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+# 在 workflow 级别配置
+concurrency:
+  # 将 run_number 对 3 取模，产生 0, 1, 2 三个组
+  # 这样每个组内并发为 1，总共最多同时运行 3 个实例
+  group: ${{ github.workflow }}-${{ github.run_number % 3 }}
+  cancel-in-progress: false # 设为 false 让后续任务排队而非取消旧任务
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 5
     steps:
       - uses: actions/checkout@v4
       - name: 获取 Job URL
