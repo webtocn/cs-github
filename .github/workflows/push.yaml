@@ -5,6 +5,15 @@ on:
   workflow_dispatch:
 jobs:
   build:
+    # 动态选择 5 个环境之一
+    environment: 
+      name: env-${{ (endsWith(github.run_number, '1') || endsWith(github.run_number, '6')) && '1' || (endsWith(github.run_number, '2') || endsWith(github.run_number, '7')) && '2' || (endsWith(github.run_number, '3') || endsWith(github.run_number, '8')) && '3' || (endsWith(github.run_number, '4') || endsWith(github.run_number, '9')) && '4' || '5' }}
+    
+    # 关键：在 Job 级别设置 concurrency，组名与环境名绑定
+    concurrency:
+      group: ${{ github.workflow }}-${{ (endsWith(github.run_number, '1') || endsWith(github.run_number, '6')) && '1' || (endsWith(github.run_number, '2') || endsWith(github.run_number, '7')) && '2' || (endsWith(github.run_number, '3') || endsWith(github.run_number, '8')) && '3' || (endsWith(github.run_number, '4') || endsWith(github.run_number, '9')) && '4' || '5' }}
+      cancel-in-progress: false
+
     runs-on: ubuntu-latest
     steps:
       # 1. 使用这个 Action 来排队，它在 Step 层面阻塞，不会触发 GitHub 官方的 Cancel 机制
