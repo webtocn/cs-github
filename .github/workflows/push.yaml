@@ -7,8 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        task_index: [1, 2, 3, 4, 5]
       max-parallel: 5
     steps:
       - uses: actions/checkout@v4
