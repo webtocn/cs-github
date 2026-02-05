@@ -12,24 +12,34 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_PARALLEL: 5
+          # 自动获取当前仓库，格式为 owner/repo
+          REPO: ${{ github.repository }}
         run: |
-          # 获取当前任务的 ID
           MY_ID=${{ github.run_id }}
           echo "My Run ID is: $MY_ID"
 
           while true; do
-            # 1. 获取所有正在排队或运行的任务，按创建时间升序排列（最早的在前）
-            # 2. 提取出它们的 ID 列表
-            RUN_LIST=$(gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            # 增加 --repo $REPO 参数，不再依赖本地 git 目录
+            RUN_LIST=$(gh run list --repo "$REPO" --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             
-            # 3. 计算自己排在第几位 (从 0 开始计数)
-            # 使用 grep 找到自己 ID 所在的行号，减 1 即为排名
-            MY_RANK=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1)
-            MY_RANK=$((MY_RANK - 1))
-            
-            echo "Current Queue Position: $MY_RANK (Max allowed: 0-$(($MAX_PARALLEL - 1)))"
+            # 如果列表为空（极罕见），重试
+            if [ -z "$RUN_LIST" ]; then
+              sleep 10
+              continue
+            fi
 
-            # 4. 判断：如果排名在前 5 名内，则跳出循环开始工作
+            MY_RANK=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1)
+            
+            # 如果没找到自己的 ID（API 同步延迟），重试
+            if [ -z "$MY_RANK" ]; then
+              echo "Waiting for API to sync my run ID..."
+              sleep 10
+              continue
+            fi
+
+            MY_RANK=$((MY_RANK - 1))
+            echo "Current Queue Position: $MY_RANK"
+
             if [ "$MY_RANK" -lt "$MAX_PARALLEL" ]; then
               echo "Slot acquired! Rank $MY_RANK is within limits."
               break
@@ -38,6 +48,8 @@ jobs:
             echo "Rank $MY_RANK is too high. Waiting 30 seconds..."
             sleep 30
           done
+
+
 
       - uses: actions/checkout@v4
       - name: 获取 Job URL
