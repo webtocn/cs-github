@@ -91,7 +91,7 @@ jobs:
           set -x
           while true; do
             
-            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow "Single_PUSH" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow "push" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             echo "RUN_LIST====> $RUN_LIST"
             
             # 2. 检查自己的 ID 是否在列表中
