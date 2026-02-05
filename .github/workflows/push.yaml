@@ -16,14 +16,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      # 1. 使用这个 Action 来排队，它在 Step 层面阻塞，不会触发 GitHub 官方的 Cancel 机制
-      - name: Concurrency Control
-        uses: softprop/turnstyle@v1
-        with:
-          # 仍然使用末尾数字映射来避开 % 报错
-          group: ${{ github.workflow }}-${{ endsWith(github.run_number, '1') && '1' || endsWith(github.run_number, '2') && '2' || '3' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v4
       - name: 获取 Job URL
         env:
