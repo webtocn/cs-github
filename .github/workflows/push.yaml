@@ -97,12 +97,6 @@ jobs:
             # 找到自己所在的行号
             LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
 
-            if [ -z "$LINE_NUM" ]; then
-              echo "⚠️ API sync pending... My ID not found in list yet. Retrying in 10s..."
-              sleep 60
-              continue
-            fi
-
             # 计算排名（第1名行号为1，Rank为0）
             MY_RANK=$((LINE_NUM - 1))
             echo "✅ Current Rank: $MY_RANK (Target: < $MAX_PARALLEL)"
@@ -115,9 +109,6 @@ jobs:
             echo "⏳ Rank $MY_RANK is too high. Waiting 30s..."
             sleep 120
           done
-
-
-
 
 
 
