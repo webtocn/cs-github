@@ -7,16 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 闸门：在这里排队。同一时间只有拥有相同 key 的 1 个 Job 能通过。
-      # 我们通过逻辑将任务分流到 5 个不同的 Key，从而实现整体并发为 5。
       - name: Wait for Barrier
         uses: [lowlighter/barrier](https://github.com)@v3
         with:
-          # 计算 Key：将 run_number 分流到 1, 2, 3, 4, 5
           key: ${{ (endsWith(github.run_number, '1') || endsWith(github.run_number, '6')) && 'q1' || (endsWith(github.run_number, '2') || endsWith(github.run_number, '7')) && 'q2' || (endsWith(github.run_number, '3') || endsWith(github.run_number, '8')) && 'q3' || (endsWith(github.run_number, '4') || endsWith(github.run_number, '9')) && 'q4' || 'q5' }}
-          # 轮询间隔（秒）
           interval: 30
-          # 超时时间（秒），防止某个任务卡死导致后面永远排不到队
           timeout: 3600
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
