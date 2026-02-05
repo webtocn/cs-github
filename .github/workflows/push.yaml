@@ -93,9 +93,12 @@ jobs:
           while true; do
             # 获取 ID 列表（按时间从老到新）
             RUN_LIST=$(gh run list --repo "$REPO" --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            echo "RUN_LIST ====> $RUN_LIST"
             
             # 找到自己所在的行号
             LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
+            echo "LINE_NUM ===> $LINE_NUM"
+    
 
             # 计算排名（第1名行号为1，Rank为0）
             MY_RANK=$((LINE_NUM - 1))
@@ -106,7 +109,7 @@ jobs:
               break
             fi
             
-            echo "⏳ Rank $MY_RANK is too high. Waiting 30s..."
+            echo "⏳ Rank $MY_RANK is too high. Waiting 120s..."
             sleep 120
           done
 
