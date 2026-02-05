@@ -91,7 +91,7 @@ jobs:
 
           while true; do
             # 获取 ID 列表（按时间从老到新）
-            gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued
+            gh run list --workflow "push.yml" --status in_progress --status queued
             RUN_LIST=$(gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             echo "RUN_LIST ====> $RUN_LIST"
             
