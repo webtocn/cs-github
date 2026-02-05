@@ -99,7 +99,7 @@ jobs:
 
             if [ -z "$LINE_NUM" ]; then
               echo "⚠️ API sync pending... My ID not found in list yet. Retrying in 10s..."
-              sleep 10
+              sleep 60
               continue
             fi
 
@@ -113,7 +113,7 @@ jobs:
             fi
             
             echo "⏳ Rank $MY_RANK is too high. Waiting 30s..."
-            sleep 30
+            sleep 120
           done
 
 
