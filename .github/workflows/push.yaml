@@ -91,18 +91,12 @@ jobs:
           set -x
           while true; do
             
-            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow "push" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow "push.yml" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             echo "RUN_LIST====> $RUN_LIST"
             
             # 2. 检查自己的 ID 是否在列表中
             LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
             echo "LINE_NUM====> $LINE_NUM"
-
-            if [ -z "$LINE_NUM" ]; then
-              echo "⚠️ API 尚未同步当前任务 ID，正在重试..."
-              sleep 10
-              continue
-            fi
 
             # 3. 计算排名
             MY_RANK=$((LINE_NUM - 1))
