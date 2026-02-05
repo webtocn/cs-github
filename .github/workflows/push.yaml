@@ -81,35 +81,38 @@ jobs:
 
 
 
-
-      - name: Wait for Concurrency Slot (Strict Rank < 5)
+      - name: Wait for Concurrency Slot
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_PARALLEL: 5
+          REPO: ${{ github.repository }}
         run: |
-          # 获取当前任务的 ID
           MY_ID=${{ github.run_id }}
-          echo "My Run ID is: $MY_ID"
+          echo "My Run ID: $MY_ID"
 
           while true; do
-            # 1. 获取所有正在排队或运行的任务，按创建时间升序排列（最早的在前）
-            # 2. 提取出它们的 ID 列表
-            RUN_LIST=$(gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            # 获取 ID 列表（按时间从老到新）
+            RUN_LIST=$(gh run list --repo "$REPO" --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             
-            # 3. 计算自己排在第几位 (从 0 开始计数)
-            # 使用 grep 找到自己 ID 所在的行号，减 1 即为排名
-            MY_RANK=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1)
-            MY_RANK=$((MY_RANK - 1))
-            
-            echo "Current Queue Position: $MY_RANK (Max allowed: 0-$(($MAX_PARALLEL - 1)))"
+            # 找到自己所在的行号
+            LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
 
-            # 4. 判断：如果排名在前 5 名内，则跳出循环开始工作
+            if [ -z "$LINE_NUM" ]; then
+              echo "⚠️ API sync pending... My ID not found in list yet. Retrying in 10s..."
+              sleep 10
+              continue
+            fi
+
+            # 计算排名（第1名行号为1，Rank为0）
+            MY_RANK=$((LINE_NUM - 1))
+            echo "✅ Current Rank: $MY_RANK (Target: < $MAX_PARALLEL)"
+
             if [ "$MY_RANK" -lt "$MAX_PARALLEL" ]; then
-              echo "Slot acquired! Rank $MY_RANK is within limits."
+              echo "🚀 Slot acquired! Starting work..."
               break
             fi
             
-            echo "Rank $MY_RANK is too high. Waiting 30 seconds..."
+            echo "⏳ Rank $MY_RANK is too high. Waiting 30s..."
             sleep 30
           done
 
