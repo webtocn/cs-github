@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
     steps:
       # 1. 使用这个 Action 来排队，它在 Step 层面阻塞，不会触发 GitHub 官方的 Cancel 机制
       - name: Concurrency Control
