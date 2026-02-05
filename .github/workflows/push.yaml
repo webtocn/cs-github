@@ -3,12 +3,16 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-# 在 workflow 级别配置
 concurrency:
-  # 将 run_number 对 3 取模，产生 0, 1, 2 三个组
-  # 这样每个组内并发为 1，总共最多同时运行 3 个实例
-  group: ${{ github.workflow }}-${{ github.run_number % 3 }}
-  cancel-in-progress: false # 设为 false 让后续任务排队而非取消旧任务
+  # 逻辑：取 run_number 最后一位，将其映射到 group1, group2 或 group3
+  # 这里的 endsWith 会检查 run_number 的末尾数字
+  group: >-
+    ${{ 
+      (endsWith(github.run_number, '1') || endsWith(github.run_number, '2') || endsWith(github.run_number, '3') || endsWith(github.run_number, '0')) && 'group-1' || 
+      (endsWith(github.run_number, '4') || endsWith(github.run_number, '5') || endsWith(github.run_number, '6')) && 'group-2' || 
+      'group-3' 
+    }}
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
