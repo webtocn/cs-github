@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for Barrier
-        uses: [lowlighter/barrier](https://github.com)@v3
+      - uses: [lowlighter/barrier](https://github.com)@v3
         with:
           key: ${{ (endsWith(github.run_number, '1') || endsWith(github.run_number, '6')) && 'q1' || (endsWith(github.run_number, '2') || endsWith(github.run_number, '7')) && 'q2' || (endsWith(github.run_number, '3') || endsWith(github.run_number, '8')) && 'q3' || (endsWith(github.run_number, '4') || endsWith(github.run_number, '9')) && 'q4' || 'q5' }}
           interval: 30
