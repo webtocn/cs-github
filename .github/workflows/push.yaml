@@ -85,14 +85,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_PARALLEL: 5
-          REPO: ${{ github.repository }}
         run: |
           MY_ID=${{ github.run_id }}
           echo "My Run ID: $MY_ID"
 
           while true; do
             # 获取 ID 列表（按时间从老到新）
-            RUN_LIST=$(gh run list --repo "$REPO" --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued
+            RUN_LIST=$(gh run list --workflow "${{ github.workflow }}" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
             echo "RUN_LIST ====> $RUN_LIST"
             
             # 找到自己所在的行号
