@@ -89,29 +89,36 @@ jobs:
           MY_ID=${{ github.run_id }}
           echo "My Run ID: $MY_ID"
 
-          set -x
           while true; do
-            # 获取 ID 列表（按时间从老到新）
-            gh run list --workflow "Single_PUSH" --status in_progress --status queued
-            RUN_LIST=$(gh run list --workflow "Single_PUSH" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
-            echo "RUN_LIST ====> $RUN_LIST"
+            # 1. 尝试获取列表。增加 --repo 确保上下文正确
+            # 注意：这里改用从 workflow_ref 提取文件名，这是最准的
+            WF_NAME=$(basename "${{ github.workflow_ref }}" | cut -d'@' -f1)
             
-            # 找到自己所在的行号
+            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow "$WF_NAME" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
+            echo "RUN_LIST====> $RUN_LIST"
+            
+            # 2. 检查自己的 ID 是否在列表中
             LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
-            echo "LINE_NUM ===> $LINE_NUM"
-    
+            echo "LINE_NUM====> $LINE_NUM"
 
-            # 计算排名（第1名行号为1，Rank为0）
+            if [ -z "$LINE_NUM" ]; then
+              echo "⚠️ API 尚未同步当前任务 ID，正在重试..."
+              sleep 10
+              continue
+            fi
+
+            # 3. 计算排名
             MY_RANK=$((LINE_NUM - 1))
-            echo "✅ Current Rank: $MY_RANK (Target: < $MAX_PARALLEL)"
+            echo "✅ 当前排名: $MY_RANK (目标并发: < $MAX_PARALLEL)"
 
-            if [ "$MY_RANK" -lt "$MAX_PARALLEL" ]; then
-              echo "🚀 Slot acquired! Starting work..."
+            # 4. 只有排名在 0 到 4 之间时才真正启动
+            if [ "$MY_RANK" -ge 0 ] && [ "$MY_RANK" -lt "$MAX_PARALLEL" ]; then
+              echo "🚀 抢到名额！开始执行..."
               break
             fi
             
-            echo "⏳ Rank $MY_RANK is too high. Waiting 120s..."
-            sleep 120
+            echo "⏳ 排名靠后，等待 30 秒后重新轮询..."
+            sleep 30
           done
 
 
