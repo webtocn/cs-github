@@ -136,6 +136,9 @@ jobs:
           cat executor.log
           /usr/bin/ossutil cp  executor.log oss://cncfstack-log/${{ github.run_id }}.txt --endpoint=${{ secrets.OSS_ENDPOINT }} --region=${{ secrets.OSS_REGION }} --access-key-id=${{ secrets.OSS_ACCESS_KEY_ID }}  --access-key-secret=${{ secrets.OSS_ACCESS_KEY_SECRET }}
        
+  exec_post:
+    runs-on: ubuntu-latest
+    steps:
       - name: 释放任务句柄
         run: |
           curl https://server.cs.cncfstack.com/github-action/increase?token=${{ secrets.NUMBER_COUT}}
