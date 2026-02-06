@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency: # 添加并发组
+      group: ${{ github.workflow }}-${{ github.ref }} # 组名，确保同分支同工作流唯一
+      cancel-in-progress: true # 当新任务开始时，直接取消组内所有正在运行的任务
     steps:
       - name: 并发控制
         run: |
