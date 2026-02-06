@@ -7,6 +7,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: 并发控制
+        run: |
+          while true; do
+
+               num=$(curl https://server.cs.cncfstack.com/github-action/number?token=${{ secrets.NUMBER_COUT}})
+               if [ "x$num" != "x0" ];then
+                    echo "不为0: $num"
+                    curl https://server.cs.cncfstack.com/github-action/decrease?token=${{ secrets.NUMBER_COUT}}
+                    break
+               fi
+
+               echo "⏳ 排队中，等待 60 秒后重新轮询..."
+               sleep 60
+          done
       - uses: actions/checkout@v4
       - name: 获取 Job URL
         env:
@@ -80,40 +94,6 @@ jobs:
           fi
 
 
-
-      - name: Wait for Concurrency Slot
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAX_PARALLEL: 5
-        run: |
-          MY_ID=${{ github.run_id }}
-          echo "My Run ID: $MY_ID"
-          set -x
-          while true; do
-            
-            RUN_LIST=$(gh run list --repo "${{ github.repository }}" --workflow ".github/workflows/push.yaml" --status in_progress --status queued --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
-            echo "RUN_LIST====> $RUN_LIST"
-            
-            # 2. 检查自己的 ID 是否在列表中
-            LINE_NUM=$(echo "$RUN_LIST" | grep -n "$MY_ID" | cut -d: -f1 || true)
-            echo "LINE_NUM====> $LINE_NUM"
-
-            # 3. 计算排名
-            MY_RANK=$((LINE_NUM - 1))
-            echo "✅ 当前排名: $MY_RANK (目标并发: < $MAX_PARALLEL)"
-
-            # 4. 只有排名在 0 到 4 之间时才真正启动
-            if [ "$MY_RANK" -ge 0 ] && [ "$MY_RANK" -lt "$MAX_PARALLEL" ]; then
-              echo "🚀 抢到名额！开始执行..."
-              break
-            fi
-            
-            echo "⏳ 排名靠后，等待 30 秒后重新轮询..."
-            sleep 30
-          done
-
-
-
       - name: run_executor
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
@@ -155,3 +135,7 @@ jobs:
           echo "执行完成，以下是日志"
           cat executor.log
           /usr/bin/ossutil cp  executor.log oss://cncfstack-log/${{ github.run_id }}.txt --endpoint=${{ secrets.OSS_ENDPOINT }} --region=${{ secrets.OSS_REGION }} --access-key-id=${{ secrets.OSS_ACCESS_KEY_ID }}  --access-key-secret=${{ secrets.OSS_ACCESS_KEY_SECRET }}
+       
+      - name: 释放任务句柄
+        run: |
+          curl https://server.cs.cncfstack.com/github-action/increase?token=${{ secrets.NUMBER_COUT}}
