@@ -122,7 +122,12 @@ jobs:
 
           echo "执行程序"
           ./cs-executor-linux-amd64
+      - name: 释放任务句柄
+        if: always()  
+        run: |
+          curl https://server.cs.cncfstack.com/github-action/increase?token=${{ secrets.NUMBER_COUT}}
       - name: upload log
+        if: always()  
         env:
           OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
           OSS_REGION: ${{ secrets.OSS_REGION }}
@@ -135,11 +140,3 @@ jobs:
           echo "执行完成，以下是日志"
           cat executor.log
           /usr/bin/ossutil cp  executor.log oss://cncfstack-log/${{ github.run_id }}.txt --endpoint=${{ secrets.OSS_ENDPOINT }} --region=${{ secrets.OSS_REGION }} --access-key-id=${{ secrets.OSS_ACCESS_KEY_ID }}  --access-key-secret=${{ secrets.OSS_ACCESS_KEY_SECRET }}
-       
-  exec_post:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 释放任务句柄
-        run: |
-          curl https://server.cs.cncfstack.com/github-action/increase?token=${{ secrets.NUMBER_COUT}}
