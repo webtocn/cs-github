@@ -118,7 +118,7 @@ jobs:
           GHCR_PWD: ${{ secrets.GHCR_PWD }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_API_TOKEN }}
+          CS_GITHUB_API_TOKEN: ${{ secrets.CS_GITHUB_API_TOKEN }}
           GITEA_URL: ${{ secrets.GITEA_URL }}
           GITEA_ACCESS_TOKEN: ${{ secrets.GITEA_ACCESS_TOKEN }}
         run: |
