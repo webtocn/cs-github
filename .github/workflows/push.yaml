@@ -55,6 +55,7 @@ jobs:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
           GHCR_PWD: ${{ secrets.GHCR_PWD }}
+          GITEA_URL: ${{ secrets.GITEA_URL }}
         run: |
 
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
@@ -116,6 +117,7 @@ jobs:
           GHCR_PWD: ${{ secrets.GHCR_PWD }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+          GITEA_URL: ${{ secrets.GITEA_URL }}
         run: |
           echo "加载TASK_INFO变量"
           source envfile
