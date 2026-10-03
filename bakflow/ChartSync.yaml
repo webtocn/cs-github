@@ -1,4 +1,4 @@
-name: Website Cron 定时同步
+name: ChartSync Cron 定时同步
 on:
   schedule:
     - cron: "30 */6 * * *"
@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get Job URL using GitHub CLI
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CS_GITHUB_API_TOKEN: ${{ secrets.CS_GITHUB_API_TOKEN }}
         id: get_job_url # 为这个步骤设置一个ID，以便后续步骤引用其输出
         run: |
           # 使用 gh run view 命令获取指定名称作业的URL
@@ -45,28 +45,20 @@ jobs:
           echo "安装软件包"
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl
 
-          # echo ""
-          # echo "安装 helm"
-          # which helm
-          # if [ $? -ne 0 ];then
-          #   curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
-          # fi
-          # helm version
+          echo ""
+          echo "安装 helm"
+          which helm
+          if [ $? -ne 0 ];then
+            curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          fi
+          helm version
 
           echo ""
           echo "下载cs-executor文件"
           RSYNC_CMD=`which rsync`
-          $RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/nas-ssd/cs-executor-linux-amd64 .
+          $RSYNC_CMD  -av --ignore-existing -e "ssh -p 22 -i github_id_rsa  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" ${RSYNC_USER}@120.55.240.206:/data/juicefs/cs-executor-linux-amd64 .
           chmod +x cs-executor-linux-amd64
-
-          echo "安装阿里云OSS 工具"
-          if [ ! -f /usr/bin/ossutil ];then
-            wget -q -O /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip  https://gosspublic.alicdn.com/ossutil/v2-beta/2.0.6-beta.01091200/ossutil-2.0.6-beta.01091200-linux-amd64.zip
-            unzip /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip -d  /tmp
-            cp /tmp/ossutil-2.0.6-beta.01091200-linux-amd64/ossutil ./ossutil
-            chmod +x ./ossutil
-            sudo cp ./ossutil /usr/bin/
-          fi
+          
       - name: Run a multi-line script
         env:
           GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
@@ -87,8 +79,7 @@ jobs:
           OSS_REGION: ${{ secrets.OSS_REGION }}
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-
-          TASK_INFO: "website"
+          TASK_INFO: "helmchart_to_chartmuseum"
         run: |
           echo "The complete job URL is: $GITHUB_ACTION_JOB_URL"
 
