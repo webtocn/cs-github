@@ -39,6 +39,7 @@ env:
   IMAGE_DISCOVERY_QUAY_MIN_POPULARITY: ${{ secrets.IMAGE_DISCOVERY_QUAY_MIN_POPULARITY }}
   IMAGE_DISCOVERY_QUAY_MAX_PAGES: ${{ secrets.IMAGE_DISCOVERY_QUAY_MAX_PAGES }}
   IMAGE_DISCOVERY_QUAY_PAGE_INTERVAL: ${{ secrets.IMAGE_DISCOVERY_QUAY_PAGE_INTERVAL }}
+  DOCKER_CONFIG_CS_AND_GHCR: ${{ secrets.DOCKER_CONFIG_CS_AND_GHCR }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -73,7 +74,10 @@ jobs:
       - name: 获取 github_id_rsa
         run: |
           echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
-      - name: 安装基础通用同居
+      - name: 获取 docker login
+        run: |
+          echo "${{ secrets.DOCKER_CONFIG_CS_AND_GHCR }}" > /tmp/docker_login && chmod 400 /tmp/docker_login 
+      - name: 安装基础通用
         run: |
           sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl gh
       - name: 安装 ffmpeg, file 图片缩略图同步依赖
