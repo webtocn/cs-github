@@ -59,10 +59,7 @@ jobs:
       - name: 初始化目录配置
         run: |
 
-          pwd
-          ls -lha 
-          echo "/////////"
-          ls -lha /
+          ls -l ~/.docker
 
           mkdir -p /home/runner/work$GIT_WORK_DIR
           mkdir -p /home/runner/work$DOWNLOAD_DIR
