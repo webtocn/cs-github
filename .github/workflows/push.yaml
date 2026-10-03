@@ -64,8 +64,8 @@ jobs:
           echo "/////////"
           ls -lha /
 
-          mkdir -p /home/runner/work${{GIT_WORK_DIR}}
-          mkdir -p /home/runner/work${{DOWNLOAD_DIR}}
+          mkdir -p /home/runner/work$GIT_WORK_DIR
+          mkdir -p /home/runner/work$DOWNLOAD_DIR
 
 
       - name: 处理Git Commit TASK_INFO
