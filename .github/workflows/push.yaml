@@ -56,6 +56,14 @@ jobs:
             sleep 60
           done
       - uses: actions/checkout@v4
+      - name: 初始化目录配置
+        run: |
+          mkdir -p $GIT_WORK_DIR
+          mkdir -p $DOWNLOAD_DIR
+          pwd
+          ls -lha 
+          echo "/////////"
+          ls -lha /
       - name: 处理Git Commit TASK_INFO
         run: |
           if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
