@@ -64,8 +64,10 @@ jobs:
           echo "/////////"
           ls -lha /
 
-          mkdir -p $GIT_WORK_DIR
-          mkdir -p $DOWNLOAD_DIR
+          mkdir -p /home/runner/work${{GIT_WORK_DIR}}
+          mkdir -p /home/runner/work${{DOWNLOAD_DIR}}
+
+
       - name: 处理Git Commit TASK_INFO
         run: |
           if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
