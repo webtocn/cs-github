@@ -3,7 +3,6 @@ on:
   push:
     branches: [ "main" ]
 env:
-  GITHUB_ACTION_JOB_URL: ${{ steps.get_job_url.outputs.url }}
   GHCR_USER: ${{ secrets.GHCR_USER }}
   GHCR_PWD: ${{ secrets.GHCR_PWD }}
   CS_SERVER_URL: ${{ secrets.CS_SERVER_URL }}
@@ -57,13 +56,6 @@ jobs:
             sleep 60
           done
       - uses: actions/checkout@v4
-      - name: 获取 Job URL
-        id: get_job_url # 为这个步骤设置一个ID，以便后续步骤引用其输出
-        run: |
-          # 使用 gh run view 命令获取指定名称作业的URL
-          JOB_URL=$(gh run view $GITHUB_RUN_ID --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url')
-          # 将获取到的URL设置为步骤的输出
-          echo "url=$JOB_URL" >> $GITHUB_OUTPUT
       - name: 处理Git Commit TASK_INFO
         run: |
           if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
