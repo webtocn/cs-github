@@ -1,0 +1,113 @@
+name: Image Task
+on:
+  schedule:
+    - cron: "3 */6 * * *"
+env:
+  GHCR_USER: ${{ secrets.GHCR_USER }}
+  GHCR_PWD: ${{ secrets.GHCR_PWD }}
+  CS_SERVER_URL: ${{ secrets.CS_SERVER_URL }}
+  CS_GITHUB_API_TOKEN: ${{ secrets.CS_GITHUB_API_TOKEN }}
+  KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
+  KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+  KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
+  KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+  OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+  OSS_REGION: ${{ secrets.OSS_REGION }}
+  OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+  OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+  MAX_CONCURRENCY_HELM: ${{ secrets.MAX_CONCURRENCY_HELM }}
+  DOWNLOAD_DIR: ${{ secrets.DOWNLOAD_DIR }}
+  RSYNC_HOST: ${{ secrets.RSYNC_HOST }}
+  RSYNC_USER: ${{ secrets.RSYNC_USER }}
+  RSYNC_PORT: ${{ secrets.RSYNC_PORT }}
+  RSYNC_PATH: ${{ secrets.RSYNC_PATH }}
+  RSYNC_SSH_KEY: ${{ secrets.RSYNC_SSH_KEY }}
+  HARBOR_URL: ${{ secrets.HARBOR_URL }}
+  HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+  HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+  GITEA_URL: ${{ secrets.GITEA_URL }}
+  GITEA_ACCESS_TOKEN: ${{ secrets.GITEA_ACCESS_TOKEN }}
+  GIT_WORK_DIR: ${{ secrets.GIT_WORK_DIR }}
+  IMAGE_DISCOVERY_DEFAULT_SYNC_PERIOD: ${{ secrets.IMAGE_DISCOVERY_DEFAULT_SYNC_PERIOD }}
+  IMAGE_DISCOVERY_DEFAULT_AUTO_TAG_REG: ${{ secrets.IMAGE_DISCOVERY_DEFAULT_AUTO_TAG_REG }}
+  IMAGE_DISCOVERY_CREATOR: ${{ secrets.IMAGE_DISCOVERY_CREATOR }}
+  IMAGE_DISCOVERY_DOCKERHUB_MAX_PAGES: ${{ secrets.IMAGE_DISCOVERY_DOCKERHUB_MAX_PAGES }}
+  IMAGE_DISCOVERY_MAX_RETRIES: ${{ secrets.IMAGE_DISCOVERY_MAX_RETRIES }}
+  IMAGE_DISCOVERY_RETRY_INTERVAL: ${{ secrets.IMAGE_DISCOVERY_RETRY_INTERVAL }}
+  IMAGE_DISCOVERY_MIN_PULL_COUNT: ${{ secrets.IMAGE_DISCOVERY_MIN_PULL_COUNT }}
+  IMAGE_DISCOVERY_DOCKERHUB_PAGE_INTERVAL: ${{ secrets.IMAGE_DISCOVERY_DOCKERHUB_PAGE_INTERVAL }}
+  IMAGE_DISCOVERY_QUAY_MIN_POPULARITY: ${{ secrets.IMAGE_DISCOVERY_QUAY_MIN_POPULARITY }}
+  IMAGE_DISCOVERY_QUAY_MAX_PAGES: ${{ secrets.IMAGE_DISCOVERY_QUAY_MAX_PAGES }}
+  IMAGE_DISCOVERY_QUAY_PAGE_INTERVAL: ${{ secrets.IMAGE_DISCOVERY_QUAY_PAGE_INTERVAL }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 并发控制
+        run: |
+          while true; do
+            num=$(curl https://server.cs.cncfstack.com/github-action/number?token=${{ secrets.NUMBER_COUT}})
+            if [ "x$num" != "x0" ];then
+                echo "不为0: $num"
+                curl https://server.cs.cncfstack.com/github-action/decrease?token=${{ secrets.NUMBER_COUT}}
+                break
+            fi
+            echo "⏳ 排队中，等待 60 秒后重新轮询..."
+            sleep 60
+          done
+      - uses: actions/checkout@v4
+      - name: 初始化目录配置
+        run: |
+
+          ls -l ~/.docker
+
+          mkdir -p /home/runner/work$GIT_WORK_DIR
+          mkdir -p /home/runner/work$DOWNLOAD_DIR
+
+      - name: 处理Git Commit TASK_INFO
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -q "TASK_INFO"; then
+              echo "export ${{ github.event.head_commit.message }}"  >> envfile
+          fi
+      - name: 获取 github_id_rsa
+        run: |
+          echo "${{ secrets.RSYNC_SSH_KEY }}" > github_id_rsa && chmod 400 github_id_rsa
+      - name: 获取 docker login
+        run: |
+          echo '${{ secrets.DOCKER_CONFIG_CS_AND_GHCR }}' > /tmp/docker_login
+      - name: 安装基础通用
+        run: |
+          sudo apt-get update && sudo apt-get install -y ca-certificates openssh-client rsync  skopeo curl gh
+      - name: 安装 ffmpeg, file 图片缩略图同步依赖
+        run: |
+          sudo apt-get update && sudo apt install ffmpeg -y
+      - name: 安装Helm
+        run: |
+          which helm
+          if [ $? -ne 0 ];then
+            curl https://raw.githubusercontent.com/helm/helm/refs/heads/main/scripts/get-helm-3 | bash
+          fi
+          helm version
+      - name: 安装阿里云OSS
+        run: |
+          echo "安装阿里云OSS 工具"
+          if [ ! -f /usr/bin/ossutil ];then
+            wget -q -O /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip  https://gosspublic.alicdn.com/ossutil/v2-beta/2.0.6-beta.01091200/ossutil-2.0.6-beta.01091200-linux-amd64.zip
+            unzip /tmp/ossutil-2.0.6-beta.01091200-linux-amd64.zip -d  /tmp
+            cp /tmp/ossutil-2.0.6-beta.01091200-linux-amd64/ossutil ./ossutil
+            chmod +x ./ossutil
+            sudo cp ./ossutil /usr/bin/
+          fi
+      - name: 安装 cs-executor
+        run: |
+          echo "下载cs-executor文件, 基于wget"
+          wget -q -O cs-executor-linux-amd64 https://raw.githubusercontent.com/cncfstack/file/refs/heads/main/cs-executor-linux-amd64
+          chmod +x cs-executor-linux-amd64
+      - name: run_executor
+        run: |
+          echo "加载TASK_INFO变量,并执行"
+          TASK_INFO="image"  ./cs-executor-linux-amd64
+      - name: 释放任务句柄
+        if: always()  
+        run: |
+          curl https://server.cs.cncfstack.com/github-action/increase?token=${{ secrets.NUMBER_COUT}}
