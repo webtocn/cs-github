@@ -9,7 +9,7 @@ if [ -z $ARGS ];then
    exit 0
 fi
 
-if [[ $ARGS == "website" ]];then
+if [[ $ARGS =~ website ]]; then
     echo "not support website"
     exit 1
 fi
